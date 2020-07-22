@@ -15,7 +15,7 @@ Requires at least: 5.0
 Requires PHP:      5.6.25
 Tested up to:      5.3.2
 Text Domain:       usi-test-solutions
-Version:           1.0.0
+Version:           1.0.1
 */
 
 /*
@@ -33,7 +33,7 @@ Copyright (c) 2020 by Jim Schwanda.
 
 final class USI_Test_Solutions {
 
-   const VERSION = '1.0.0 (1957-08-10)';
+   const VERSION = '1.0.1 (2020-07-22)';
 
    const NAME       = 'Test-Solutions';
    const PREFIX     = 'usi-test';
@@ -42,14 +42,34 @@ final class USI_Test_Solutions {
    public static $options = array();
 
    public static $capabilities = array(
-      'Change-Values' => 'Change values',
+      'change-values' => 'Change Values|administrator',
    );
 
    function __construct() {
+
       if (empty(USI_Test_Solutions::$options)) {
          $defaults['preferences']['best-university'] = 'Lehigh University';
          USI_Test_Solutions::$options = get_option(self::PREFIX . '-options', $defaults);
       }
+
+
+      if (is_admin()) {
+
+         global $pagenow;
+         if ('admin.php' == $pagenow) {
+         }
+
+         if (!defined('WP_UNINSTALL_PLUGIN')) {
+            add_action('init', 'add_thickbox');
+            require_once('usi-test-solutions-settings.php'); 
+            if (!empty(USI_Test_Solutions::$options['updates']['git-update'])) {
+               require_once(plugin_dir_path(__DIR__) . 'usi-wordpress-solutions/usi-wordpress-solutions-update.php');
+               new USI_WordPress_Solutions_Update(__FILE__, 'jaschwanda', 'test-solutions');
+            }
+         }
+
+      }
+
    } // __construct();
 
    static function action_admin_notices() {
@@ -67,18 +87,5 @@ final class USI_Test_Solutions {
 } // Class USI_Test_Solutions;
 
 new USI_Test_Solutions();
-
-if (is_admin() && !defined('WP_UNINSTALL_PLUGIN')) {
-   require_once('usi-test-solutions-settings.php');
-   if (is_dir(plugin_dir_path(__DIR__) . 'usi-wordpress-solutions')) {
-      require_once('usi-test-solutions-settings.php'); 
-      if (!empty(USI_Test_Solutions::$options['updates']['git-update'])) {
-         require_once(plugin_dir_path(__DIR__) . 'usi-wordpress-solutions/usi-wordpress-solutions-update.php');
-         new USI_WordPress_Solutions_Update(__FILE__, 'jaschwanda', 'test-solutions');
-      }
-   } else {
-      add_action('admin_notices', array('USI_Test_Solutions', 'action_admin_notices'));
-   }
-}
 
 // --------------------------------------------------------------------------------------------------------------------------- // ?>

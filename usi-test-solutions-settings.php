@@ -22,17 +22,21 @@ require_once(plugin_dir_path(__DIR__) . 'usi-wordpress-solutions/usi-wordpress-s
 
 class USI_Test_Solutions_Settings extends USI_WordPress_Solutions_Settings {
 
-   const VERSION = '1.0.0 (1957-08-10)';
+   const VERSION = '1.0.1 (2020-07-22)';
 
    protected $is_tabbed = true;
 
    function __construct() {
 
       parent::__construct(
-         USI_Test_Solutions::NAME, 
-         USI_Test_Solutions::PREFIX, 
-         USI_Test_Solutions::TEXTDOMAIN,
-         USI_Test_Solutions::$options
+         array(
+            'name' => USI_Test_Solutions::NAME, 
+            'prefix' => USI_Test_Solutions::PREFIX, 
+            'text_domain' => USI_Test_Solutions::TEXTDOMAIN,
+            'options' => USI_Test_Solutions::$options,
+            'capabilities' => USI_Test_Solutions::$capabilities,
+            'file' => str_replace('-settings', '', __FILE__), // Plugin main file, this initializes capabilities on plugin activation;
+         )
       );
 
    } // __construct();
@@ -66,6 +70,8 @@ class USI_Test_Solutions_Settings extends USI_WordPress_Solutions_Settings {
          'preferences' => array(
             'header_callback' => array($this, 'config_section_header_preferences'),
             'label' => 'Preferences',
+            'localize_labels' => 'yes',
+            'localize_notes' => 3, // <p class="description">__()</p>;
             'settings' => array(
                'best-university' => array(
                   'type' => 'text', 
@@ -75,28 +81,11 @@ class USI_Test_Solutions_Settings extends USI_WordPress_Solutions_Settings {
             ),
          ), // preferences;
 
-         'capabilities' => USI_WordPress_Solutions_Capabilities::section(
-            USI_Test_Solutions::NAME, 
-            USI_Test_Solutions::PREFIX, 
-            USI_Test_Solutions::TEXTDOMAIN,
-            USI_Test_Solutions::$capabilities,
-            USI_Test_Solutions::$options
-         ), // capabilities;
+         'capabilities' => new USI_WordPress_Solutions_Capabilities($this),
 
-         'updates' => USI_WordPress_Solutions_Updates::section(
-            USI_Test_Solutions::TEXTDOMAIN
-         ), // updates;
+         'updates' => new USI_WordPress_Solutions_Updates($this),
 
       );
-
-      foreach ($sections as $name => & $section) {
-         foreach ($section['settings'] as $name => & $setting) {
-            if (!empty($setting['label'])) $setting['label'] = __($setting['label'], USI_Test_Solutions::TEXTDOMAIN);
-            if (!empty($setting['notes'])) $setting['notes'] = '<p class="description">' . 
-               __($setting['notes'], USI_Test_Solutions::TEXTDOMAIN) . '</p>';
-         }
-      }
-      unset($setting);
 
       return($sections);
 
