@@ -21,7 +21,7 @@ require_once('usi-test-solutions.php');
 
 final class USI_Test_Solutions_Uninstall {
 
-   const VERSION = '1.0.0 (1957-08-10)';
+   const VERSION = '1.0.2 (2020-11-02)';
 
    private function __construct() {
    } // __construct();

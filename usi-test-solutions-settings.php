@@ -16,13 +16,14 @@ Copyright (c) 2020 by Jim Schwanda.
 */
 
 require_once(plugin_dir_path(__DIR__) . 'usi-wordpress-solutions/usi-wordpress-solutions-capabilities.php');
+require_once(plugin_dir_path(__DIR__) . 'usi-wordpress-solutions/usi-wordpress-solutions-popup-iframe.php');
 require_once(plugin_dir_path(__DIR__) . 'usi-wordpress-solutions/usi-wordpress-solutions-settings.php');
 require_once(plugin_dir_path(__DIR__) . 'usi-wordpress-solutions/usi-wordpress-solutions-updates.php');
 require_once(plugin_dir_path(__DIR__) . 'usi-wordpress-solutions/usi-wordpress-solutions-versions.php');
 
 class USI_Test_Solutions_Settings extends USI_WordPress_Solutions_Settings {
 
-   const VERSION = '1.0.1 (2020-07-22)';
+   const VERSION = '1.0.2 (2020-11-02)';
 
    protected $is_tabbed = true;
 
@@ -40,10 +41,6 @@ class USI_Test_Solutions_Settings extends USI_WordPress_Solutions_Settings {
       );
 
    } // __construct();
-
-   function config_section_header_preferences() {
-      echo '<p>' . __('General description of preferences.', USI_Test_Solutions::TEXTDOMAIN) . '</p>' . PHP_EOL;
-   } // config_section_header_preferences();
 
    function fields_sanitize($input) {
       return($input);
@@ -66,6 +63,54 @@ class USI_Test_Solutions_Settings extends USI_WordPress_Solutions_Settings {
 
    function sections() {
 
+      USI_WordPress_Solutions_Popup_Iframe::build(
+         array(
+            'close'  => __('Close', USI_Test_Solutions::TEXTDOMAIN),
+            'height' => '640px',
+            'id'     => 'usi-popup-php-info',
+            'width'  => '980px',
+         )
+      );
+
+      $phpinfo_anchor = USI_WordPress_Solutions_Popup_Iframe::link(
+         array(
+            'id'     => 'usi-popup-php-info',
+            'iframe' => str_replace('-test-', '-wordpress-', plugins_url(null, __FILE__) . '/usi-wordpress-solutions-phpinfo-scan.php'),
+            'link'   => array('text' => 'phpinfo()'),
+            'tip'    => __('Display PHP information', USI_Test_Solutions::TEXTDOMAIN),
+            'title'  => 'phpinfo()',
+         )
+      );
+
+      USI_WordPress_Solutions_Popup_Iframe::build(
+         array(
+            'close'   => __('Close', USI_Test_Solutions::TEXTDOMAIN),
+            'height' => '500px',
+            'id'     => 'usi-popup-version',
+            'width'  => '500px',
+         )
+      );
+
+      $version1_anchor = USI_WordPress_Solutions_Popup_Iframe::link(
+         array(
+            'id'     => 'usi-popup-version',
+            'iframe' => str_replace('-test-', '-wordpress-', plugins_url(null, __FILE__) . '/usi-wordpress-solutions-versions-scan.php?') . urlencode(__DIR__),
+            'link'   => array('text' => 'Version ' . USI_Test_Solutions::VERSION),
+            'tip'    => __('Display detailed version information', USI_Test_Solutions::TEXTDOMAIN),
+            'title'  => 'Test-Solutions &nbsp; &nbsp; ' . __('Version', USI_Test_Solutions::TEXTDOMAIN) . ' ' . USI_Test_Solutions::VERSION,
+         )
+      );
+
+      $version2_anchor = USI_WordPress_Solutions_Popup_Iframe::link(
+         array(
+            'id'     => 'usi-popup-version',
+            'iframe' => str_replace('-test-', '-wordpress-', plugins_url(null, __FILE__) . '/usi-wordpress-solutions-versions-scan.php?') . urlencode(str_replace('-test-', '-wordpress-', __DIR__)),
+            'link'   => array('text' => 'Version ' . USI_WordPress_Solutions::VERSION),
+            'tip'    => __('Display detailed version information', USI_WordPress_Solutions::TEXTDOMAIN),
+            'title'  => 'WiordPress-Solutions &nbsp; &nbsp; ' . __('Version', USI_Test_Solutions::TEXTDOMAIN) . ' ' . USI_Test_Solutions::VERSION,
+         )
+      );
+
       $sections = array(
          'preferences' => array(
             'header_callback' => array($this, 'config_section_header_preferences'),
@@ -77,6 +122,21 @@ class USI_Test_Solutions_Settings extends USI_WordPress_Solutions_Settings {
                   'type' => 'text', 
                   'label' => 'Best university in the USA',
                   'notes' => 'Enter the name of the best university east of all points west. Defaults to Lehigh University.',
+               ),
+               'phpinfo' => array(
+                  'type' => 'html', 
+                  'html' => $phpinfo_anchor,
+                  'label' => 'Information',
+               ),
+               'version1' => array(
+                  'type' => 'html', 
+                  'html' => $version1_anchor,
+                  'label' => 'Test Solutions',
+               ),
+               'version2' => array(
+                  'type' => 'html', 
+                  'html' => $version2_anchor,
+                  'label' => 'WordPress Solutions',
                ),
             ),
          ), // preferences;
@@ -90,6 +150,10 @@ class USI_Test_Solutions_Settings extends USI_WordPress_Solutions_Settings {
       return($sections);
 
    } // sections();
+
+   function config_section_header_preferences() {
+      echo '<p>' . __('General description of preferences.', USI_Test_Solutions::TEXTDOMAIN) . '</p>' . PHP_EOL;
+   } // config_section_header_preferences();
 
 } // Class USI_Test_Solutions_Settings;
 

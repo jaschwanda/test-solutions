@@ -15,7 +15,7 @@ Requires at least: 5.0
 Requires PHP:      5.6.25
 Tested up to:      5.3.2
 Text Domain:       usi-test-solutions
-Version:           1.0.1
+Version:           1.0.2
 */
 
 /*
@@ -33,7 +33,7 @@ Copyright (c) 2020 by Jim Schwanda.
 
 final class USI_Test_Solutions {
 
-   const VERSION = '1.0.1 (2020-07-22)';
+   const VERSION = '1.0.2 (2020-11-02)';
 
    const NAME       = 'Test-Solutions';
    const PREFIX     = 'usi-test';
@@ -54,10 +54,6 @@ final class USI_Test_Solutions {
 
 
       if (is_admin()) {
-
-         global $pagenow;
-         if ('admin.php' == $pagenow) {
-         }
 
          if (!defined('WP_UNINSTALL_PLUGIN')) {
             add_action('init', 'add_thickbox');
